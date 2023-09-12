@@ -1,4 +1,4 @@
-(() => {
+function init() {
   var e,
     t = {
       14893: (e, t, s) => {
@@ -292,6 +292,7 @@
           }
           loadData() {
             const e = re.getState();
+            e.endless_bestScore = window.highscores.getScore();
             this.localData = {
               settings: {
                 character: e.currentCharacter,
@@ -341,15 +342,17 @@
               ...this.getCommonStats(q.Endless, e),
               loseCondition: s.caught ? "kraken" : "lives",
               dogCollected: s.friend,
-            }),
-              !s.cheat.used &&
-                e > t &&
-                ((te.sys.session.bestScore.endless = e),
-                (s.highScore = !0),
-                this.saveData({
-                  ...re.getState(),
-                  endless_bestScore: e,
-                }));
+            });
+              if (!s.cheat.used && e > t) {
+                  te.sys.session.bestScore.endless = e;
+                  s.highScore = !0;
+                  let state = re.getState();
+                  this.saveData({
+                      ...state,
+                      endless_bestScore: e,
+                  });
+                  window.highscores.setScore(e);
+              }
           }
           storeTimeTrialStats() {
             const e = te.sys.getCurrentScore(),
@@ -10041,28 +10044,24 @@
             const t = this.props.managedClasses.howToPlayModal_icon,
               s = this.props.managedClasses.howToPlayModal_iconContainer,
               i = this.props.managedClasses.howToPlayModal_listItem;
-            let o, n, r;
+            let o, n;
             switch (e) {
               case "touch":
                 (o = "howToPlayTouchMovement"),
-                  (n = "howToPlayTouchBoost"),
-                  (r = "howToPlayTouchRefresh");
+                  (n = "howToPlayTouchBoost");
                 break;
               case "mouse":
                 (o = "howToPlayMouseMovement"),
-                  (n = "howToPlayMouseBoost"),
-                  (r = "howToPlayMouseRefresh");
+                  (n = "howToPlayMouseBoost");
                 break;
               case "controller":
                 (o = "howToPlayControllerMovement"),
-                  (n = "howToPlayControllerBoost"),
-                  (r = "howToPlayControllerRefresh");
+                  (n = "howToPlayControllerBoost");
                 break;
               default:
               case "keyboard":
                 (o = "howToPlayKeyboardMovement"),
-                  (n = "howToPlayKeyboardBoost"),
-                  (r = "howToPlayKeyboardRefresh");
+                  (n = "howToPlayKeyboardBoost");
             }
             return a.createElement(
               "ul",
@@ -10135,34 +10134,6 @@
                 ),
                 Z.pz.getString(n)
               ),
-              a.createElement(
-                "li",
-                {
-                  className: i,
-                },
-                a.createElement(
-                  "div",
-                  {
-                    "aria-hidden": !0,
-                    className: s,
-                  },
-                  (function (e) {
-                    return a.createElement(
-                      "svg",
-                      {
-                        width: 20,
-                        height: 20,
-                        viewBox: "0 0 20 20",
-                        className: e,
-                      },
-                      a.createElement("path", {
-                        d: "M3.07 9.05a7 7 0 0112.55-3.22l.13.17H12.5a.5.5 0 100 1h4a.5.5 0 00.5-.5v-4a.5.5 0 00-1 0v2.2a8 8 0 101.99 4.77.5.5 0 00-1 .08 7 7 0 11-13.92-.5z",
-                      })
-                    );
-                  })(t)
-                ),
-                Z.pz.getString(r)
-              )
             );
             var l;
           }
@@ -10601,14 +10572,6 @@
                     .settingsHamburgerMenu_flyout_divider,
               }),
 
-              // share game section
-              this.renderShareSection(),
-              a.createElement(P.iz, {
-                className:
-                  this.props.managedClasses
-                    .settingsHamburgerMenu_flyout_divider,
-              }),
-
               // game settings toggles
               this.renderToggleSection(),
               a.createElement(P.iz, {
@@ -10759,59 +10722,6 @@
                   onChange: this.onHighVisiblityModeChange,
                 })
               ),
-              a.createElement(
-                "div",
-                {
-                  className:
-                    this.props.managedClasses
-                      .settingsHamburgerMenu_flyout_toggleRow,
-                },
-                a.createElement(
-                  E.__,
-                  {
-                    htmlFor: "reducedSpeedMode",
-                  },
-                  Z.pz.getString("reducedSpeedModeToggleLabel")
-                ),
-                a.createElement(D.ZD, {
-                  jssStyleSheet: m,
-                  inputId: "reducedSpeedMode",
-                  defaultChecked: !0,
-                  selectedMessage: e,
-                  unselectedMessage: t,
-                  selected: this.props.gameSpeed !== se,
-                  onChange: this.onReducedSpeedModeChange,
-                })
-              )
-            );
-          }
-          renderShareSection() {
-            return a.createElement(
-              "div",
-              {
-                className:
-                  this.props.managedClasses
-                    .settingsHamburgerMenu_flyout_shareRow,
-              },
-              a.createElement(
-                E.__,
-                {
-                  htmlFor: "shareButton",
-                },
-                Z.pz.getString("share")
-              ),
-              a.createElement(
-                _.ER,
-                {
-                  id: "shareButton",
-                  jssStyleSheet: f,
-                  onClick: this.copyShareLinkToClipboard,
-                  beforeContent: this.state.shareLinkCopied ? B : V,
-                },
-                this.state.shareLinkCopied
-                  ? Z.pz.getString("shareLinkCopied")
-                  : Z.pz.getString("shareCopy")
-              )
             );
           }
           renderButtonSection() {
@@ -10838,14 +10748,6 @@
                 },
                 Z.pz.getString("gameCreditsButton")
               ),
-              a.createElement(
-                I.Of,
-                {
-                  jssStyleSheet: f,
-                  onClick: this.confirmResetStats,
-                },
-                Z.pz.getString("resetAllStats")
-              )
             );
           }
         }
@@ -13437,4 +13339,6 @@
     })();
   var a = i.O(void 0, [692, 197], () => i(13695));
   a = i.O(a);
-})();
+}
+
+window.highscores.init("SURF").then(init);
